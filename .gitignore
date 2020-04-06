@@ -1,0 +1,4 @@
+.~lock.*
+__pycache__
+/.ve
+/tests/data/out/*.xlsx
