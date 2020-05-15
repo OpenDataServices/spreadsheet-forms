@@ -1,5 +1,7 @@
 import os
 
+import openpyxl
+
 from spreadsheetforms.api import put_data_in_form
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
@@ -23,4 +25,11 @@ def test_1():
 
     put_data_in_form(os.path.join(TEST_DATA_DIR, "pet1.xlsx"), data, outfile)
 
-    # TODO actually test output file - for now we just dump it in a known place so a human can have a look
+    workbook = openpyxl.load_workbook(outfile, read_only=True)
+
+    assert "Dog" == workbook["Info"]["B5"].value
+    assert "Woof Woof" == workbook["Info"]["B6"].value
+    assert "Plastic bone" == workbook["Toys"]["A7"].value
+    assert "Oh Yes" == workbook["Toys"]["B7"].value
+    assert "Tennis Ball" == workbook["Toys"]["A8"].value
+    assert "No" == workbook["Toys"]["B8"].value

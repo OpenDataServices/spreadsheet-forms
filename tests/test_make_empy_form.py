@@ -1,5 +1,7 @@
 import os
 
+import openpyxl
+
 from spreadsheetforms.api import make_empty_form
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
@@ -14,4 +16,9 @@ def test_1():
 
     make_empty_form(os.path.join(TEST_DATA_DIR, "pet1.xlsx"), outfile)
 
-    # TODO actually test output file - for now we just dump it in a known place so a human can have a look
+    workbook = openpyxl.load_workbook(outfile, read_only=True)
+
+    assert "Pet" == workbook["Info"]["A5"].value
+    assert None == workbook["Info"]["B5"].value
+    assert None == workbook["Toys"]["A7"].value
+    assert None == workbook["Toys"]["B7"].value
