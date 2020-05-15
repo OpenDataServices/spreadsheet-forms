@@ -2,6 +2,8 @@ from shutil import copyfile
 
 import openpyxl
 
+from .util import json_append_deep_value, json_get_deep_value, json_set_deep_value
+
 
 def _is_content_a_guide_field(content):
     return content and content.startswith("SPREADSHEETFORM:")
@@ -73,31 +75,29 @@ def get_data_from_form(guide_filename, in_filename):
 
         # Step 2: Process single configs (easy ones)
         for single_config in single_configs.values():
-            # TODO this only does top level paths - we should add so it can do paths with several levels
-            data[single_config["path"]] = in_workbook[worksheet.title][
-                single_config["coordinate"]
-            ].value
+            json_set_deep_value(
+                data,
+                single_config["path"],
+                in_workbook[worksheet.title][single_config["coordinate"]].value,
+            )
 
         # Step 3: Process Down Configs
         for down_config in down_configs.values():
             start_row = down_config[0]["row"]
             max_row = in_workbook[worksheet.title].max_row + 1
-            # TODO this only does top level paths - we should add so it can do paths with several levels
-            data[down_config[0]["list_path"]] = []
+            json_set_deep_value(data, down_config[0]["list_path"], [])
             for row in range(start_row, max_row + 1):
                 item = {}
                 found_anything = False
                 for this_down_config in down_config:
-                    # TODO this only does top level paths - we should add so it can do paths with several levels
                     cell = in_workbook[worksheet.title][
                         this_down_config["column_letter"] + str(row)
                     ]
-                    item[this_down_config["item_path"]] = cell.value
-                    if item[this_down_config["item_path"]]:
+                    json_set_deep_value(item, this_down_config["item_path"], cell.value)
+                    if json_get_deep_value(item, this_down_config["item_path"]):
                         found_anything = True
                 if found_anything:
-                    # TODO this only does top level paths - we should add so it can do paths with several levels
-                    data[down_config[0]["list_path"]].append(item)
+                    json_append_deep_value(data, down_config[0]["list_path"], item)
 
     return data
 
@@ -113,27 +113,28 @@ def put_data_in_form(guide_filename, data, out_filename):
 
         # Step 2: Process single configs (easy ones)
         for single_config in single_configs.values():
-            # TODO this only does top level paths - we should add so it can do paths with several levels
-            worksheet[single_config["coordinate"]] = data.get(single_config["path"])
+            worksheet[single_config["coordinate"]] = json_get_deep_value(
+                data, single_config["path"]
+            )
 
         # Step 3: Process Down Configs
         for down_config in down_configs.values():
-            datas_to_insert = data.get(down_config[0]["list_path"], [])
+            datas_to_insert = json_get_deep_value(data, down_config[0]["list_path"])
             if isinstance(datas_to_insert, list):
                 if len(datas_to_insert) == 0:
                     # we still want to remove the special values from the output spreadsheet
                     for this_down_config in down_config:
-                        # TODO this only does top level paths - we should add so it can do paths with several levels
                         worksheet[this_down_config["coordinate"]] = ""
                 else:
                     extra_row = 0
                     for data_to_insert in datas_to_insert:
                         for this_down_config in down_config:
-                            # TODO this only does top level paths - we should add so it can do paths with several levels
                             worksheet[
                                 this_down_config["column_letter"]
                                 + str(this_down_config["row"] + extra_row)
-                            ] = data_to_insert.get(this_down_config["item_path"])
+                            ] = json_get_deep_value(
+                                data_to_insert, this_down_config["item_path"]
+                            )
                         extra_row += 1
 
     workbook.save(out_filename)

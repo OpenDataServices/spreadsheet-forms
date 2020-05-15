@@ -13,7 +13,7 @@ To do this, in your cell put
     SPREADSHEETFORM:SINGLE:jsonkey
 
 
-Note the `jsonkey` must be a single key and can not contain paths yet; eg "pet" is acceptable, "pet/title" is not.
+See :doc:`JSON Key for information on how to structure those<jsonkey>`.
 
 Example
 -------

@@ -1,6 +1,6 @@
 from setuptools import setup
 
-install_requires = ["openpyxl>=3.0"]
+install_requires = ["openpyxl>=3.0", "jsonpointer"]
 
 setup(
     name="spreadsheetforms",

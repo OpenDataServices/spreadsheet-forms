@@ -23,3 +23,28 @@ def test_1():
             {"title": "Marble", "squeak": "No"},
         ],
     } == data
+
+
+def test_deep():
+
+    data = get_data_from_form(
+        os.path.join(TEST_DATA_DIR, "pet1-deep.xlsx"),
+        os.path.join(TEST_DATA_DIR, "cat1.xlsx"),
+    )
+
+    assert {
+        "emits": {"noise": "Miaow Miaow Purr Purr Hiss"},
+        "pet": {"kind": "Cat"},
+        "likes": {
+            "toys": [
+                {
+                    "human-concerns": {"title": "Bit of string"},
+                    "pet-concerns": {"squeak": "No"},
+                },
+                {
+                    "human-concerns": {"title": "Marble"},
+                    "pet-concerns": {"squeak": "No"},
+                },
+            ]
+        },
+    } == data

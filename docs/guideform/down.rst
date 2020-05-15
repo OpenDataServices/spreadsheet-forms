@@ -28,7 +28,7 @@ The order of the rows and the order of the items in the JSON list will be the sa
 
 The `itemkey` is the JSON key that the data will appear in in each dictionary.
 
-Note the `listkey` and `itemkey` must be a single key and can not contain paths yet; eg "pet" is acceptable, "pet/title" is not.
+See :doc:`JSON Key for information on how to structure those<jsonkey>`.
 
 Example
 -------
