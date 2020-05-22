@@ -35,6 +35,24 @@ def test_1():
     assert "No" == workbook["Toys"]["B8"].value
 
 
+def test_no_list():
+
+    outfile = os.path.join(TEST_DATA_OUT_DIR, "put_data_in_form_1_no_list.xlsx")
+
+    data = {"noise": "Woof Woof", "pet": "Dog"}
+
+    put_data_in_form(os.path.join(TEST_DATA_DIR, "pet1.xlsx"), data, outfile)
+
+    workbook = openpyxl.load_workbook(outfile, read_only=True)
+
+    assert "Dog" == workbook["Info"]["B5"].value
+    assert "Woof Woof" == workbook["Info"]["B6"].value
+    assert None == workbook["Toys"]["A7"].value
+    assert None == workbook["Toys"]["B7"].value
+    assert None == workbook["Toys"]["A8"].value
+    assert None == workbook["Toys"]["B8"].value
+
+
 def test_deep():
 
     outfile = os.path.join(TEST_DATA_OUT_DIR, "put_data_in_form_1_deep.xlsx")

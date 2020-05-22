@@ -120,21 +120,20 @@ def put_data_in_form(guide_filename, data, out_filename):
         # Step 3: Process Down Configs
         for down_config in down_configs.values():
             datas_to_insert = json_get_deep_value(data, down_config[0]["list_path"])
-            if isinstance(datas_to_insert, list):
-                if len(datas_to_insert) == 0:
-                    # we still want to remove the special values from the output spreadsheet
+            if isinstance(datas_to_insert, list) and len(datas_to_insert) > 0:
+                extra_row = 0
+                for data_to_insert in datas_to_insert:
                     for this_down_config in down_config:
-                        worksheet[this_down_config["coordinate"]] = ""
-                else:
-                    extra_row = 0
-                    for data_to_insert in datas_to_insert:
-                        for this_down_config in down_config:
-                            worksheet[
-                                this_down_config["column_letter"]
-                                + str(this_down_config["row"] + extra_row)
-                            ] = json_get_deep_value(
-                                data_to_insert, this_down_config["item_path"]
-                            )
-                        extra_row += 1
+                        worksheet[
+                            this_down_config["column_letter"]
+                            + str(this_down_config["row"] + extra_row)
+                        ] = json_get_deep_value(
+                            data_to_insert, this_down_config["item_path"]
+                        )
+                    extra_row += 1
+            else:
+                # no data, but we still want to remove the special values from the output spreadsheet
+                for this_down_config in down_config:
+                    worksheet[this_down_config["coordinate"]] = ""
 
     workbook.save(out_filename)

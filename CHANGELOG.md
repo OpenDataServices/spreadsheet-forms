@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.1] - 2020-05-22
+
+### Fixed
+
+- put_data_in_form: on a DOWN set of fields, where the list did not exist in the data at all, the field configs were not cleared
+
 ## [0.2.0] - 2020-05-15
 
 ### Changed
