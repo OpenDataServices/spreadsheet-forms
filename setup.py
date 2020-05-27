@@ -4,7 +4,7 @@ install_requires = ["openpyxl>=3.0", "jsonpointer"]
 
 setup(
     name="spreadsheetforms",
-    version="0.2.1",
+    version="0.3.0",
     author="Open Data Services",
     author_email="code@opendataservices.coop",
     packages=["spreadsheetforms"],
