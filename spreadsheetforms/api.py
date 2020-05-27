@@ -10,10 +10,10 @@ def _is_content_a_guide_field(content):
 
 
 def _get_guide_field_spec_from_content(content):
-    if content and content.startswith("SPREADSHEETFORM:SINGLE:"):
+    if isinstance(content, str) and content.startswith("SPREADSHEETFORM:SINGLE:"):
         return {"mode": "single", "path": content[23:]}
 
-    if content and content.startswith("SPREADSHEETFORM:DOWN:"):
+    if isinstance(content, str) and content.startswith("SPREADSHEETFORM:DOWN:"):
         bits = content.split(":")
         return {
             "mode": "down",

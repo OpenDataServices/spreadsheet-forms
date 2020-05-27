@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from spreadsheetforms.api import get_data_from_form
@@ -47,4 +48,18 @@ def test_deep():
                 },
             ]
         },
+    } == data
+
+
+def test_formats_1():
+
+    data = get_data_from_form(
+        os.path.join(TEST_DATA_DIR, "formats1.xlsx"),
+        os.path.join(TEST_DATA_DIR, "formats1-data1.xlsx"),
+    )
+    assert {
+        "currency": "$1.23",
+        "date": datetime.datetime(2020, 10, 27, 0, 0),
+        "number": 1.456,
+        "string": "CATS",
     } == data
