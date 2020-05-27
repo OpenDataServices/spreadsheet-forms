@@ -63,3 +63,18 @@ def test_formats_1():
         "number": 1.456,
         "string": "CATS",
     } == data
+
+
+def test_formats_1_date_format():
+
+    data = get_data_from_form(
+        os.path.join(TEST_DATA_DIR, "formats1.xlsx"),
+        os.path.join(TEST_DATA_DIR, "formats1-data1.xlsx"),
+        date_format="%Y-%m-%d",
+    )
+    assert {
+        "currency": "$1.23",
+        "date": "2020-10-27",
+        "number": 1.456,
+        "string": "CATS",
+    } == data

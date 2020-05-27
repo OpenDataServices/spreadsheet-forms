@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- added date_format to get_data_from_form
+
 ## [0.2.1] - 2020-05-22
 
 ### Fixed

@@ -1,3 +1,4 @@
+import datetime
 from shutil import copyfile
 
 import openpyxl
@@ -22,6 +23,15 @@ def _get_guide_field_spec_from_content(content):
         }
 
     return None
+
+
+def _get_cell_value(cell, date_format=None):
+    value = cell.value
+
+    if isinstance(value, datetime.datetime) and date_format:
+        return value.strftime(date_format)
+
+    return value
 
 
 def make_empty_form(guide_filename, out_filename):
@@ -63,7 +73,7 @@ def _build_all_configs_in_excel_sheet(worksheet):
     return single_configs, down_configs
 
 
-def get_data_from_form(guide_filename, in_filename):
+def get_data_from_form(guide_filename, in_filename, date_format=None):
     data = {}
     guide_workbook = openpyxl.load_workbook(guide_filename, read_only=True)
     in_workbook = openpyxl.load_workbook(in_filename, read_only=True)
@@ -78,7 +88,10 @@ def get_data_from_form(guide_filename, in_filename):
             json_set_deep_value(
                 data,
                 single_config["path"],
-                in_workbook[worksheet.title][single_config["coordinate"]].value,
+                _get_cell_value(
+                    in_workbook[worksheet.title][single_config["coordinate"]],
+                    date_format,
+                ),
             )
 
         # Step 3: Process Down Configs
@@ -93,7 +106,11 @@ def get_data_from_form(guide_filename, in_filename):
                     cell = in_workbook[worksheet.title][
                         this_down_config["column_letter"] + str(row)
                     ]
-                    json_set_deep_value(item, this_down_config["item_path"], cell.value)
+                    json_set_deep_value(
+                        item,
+                        this_down_config["item_path"],
+                        _get_cell_value(cell, date_format),
+                    )
                     if json_get_deep_value(item, this_down_config["item_path"]):
                         found_anything = True
                 if found_anything:
