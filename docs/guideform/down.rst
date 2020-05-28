@@ -6,7 +6,7 @@ Definition
 ----------
 
 Sometimes you want to allow people to put in multiple rows with the same set of headings.
-People can put in as few or as many as they want.
+People can put in as few or as many rows as they want.
 Each row will be converted to one JSON dictionary.
 In the final data, there will be a list of JSON dictionaries.
 

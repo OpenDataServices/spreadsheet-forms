@@ -10,4 +10,5 @@ You then put special values in certain cells to indicate that these cells should
 
    single.rst
    down.rst
+   right.rst
    jsonkey.rst

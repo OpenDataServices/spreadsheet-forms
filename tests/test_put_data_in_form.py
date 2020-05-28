@@ -17,6 +17,15 @@ def test_1():
     data = {
         "noise": "Woof Woof",
         "pet": "Dog",
+        "hungry": [
+            {"state": "Yes", "wants": "Food"},
+            {"state": "Always", "wants": "Food"},
+            {"state": "Right Now", "wants": "Food"},
+        ],
+        "sleepy": [
+            {"state": "A lot", "wants": "Sleep"},
+            {"state": "Also Right Now", "wants": "A Nap"},
+        ],
         "toys": [
             {"title": "Plastic bone", "squeak": "Oh Yes"},
             {"title": "Tennis Ball", "squeak": "No"},
@@ -27,8 +36,25 @@ def test_1():
 
     workbook = openpyxl.load_workbook(outfile, read_only=True)
 
+    # Test - General Info
     assert "Dog" == workbook["Info"]["B5"].value
     assert "Woof Woof" == workbook["Info"]["B6"].value
+
+    # Test - Hungry
+    assert "Yes" == workbook["Info"]["B9"].value
+    assert "Food" == workbook["Info"]["B10"].value
+    assert "Always" == workbook["Info"]["C9"].value
+    assert "Food" == workbook["Info"]["C10"].value
+    assert "Right Now" == workbook["Info"]["D9"].value
+    assert "Food" == workbook["Info"]["D10"].value
+
+    # Test - Sleepy
+    assert "A lot" == workbook["Info"]["B13"].value
+    assert "Sleep" == workbook["Info"]["B14"].value
+    assert "Also Right Now" == workbook["Info"]["C13"].value
+    assert "A Nap" == workbook["Info"]["C14"].value
+
+    # Test - Toys
     assert "Plastic bone" == workbook["Toys"]["A7"].value
     assert "Oh Yes" == workbook["Toys"]["B7"].value
     assert "Tennis Ball" == workbook["Toys"]["A8"].value
@@ -45,8 +71,25 @@ def test_no_list():
 
     workbook = openpyxl.load_workbook(outfile, read_only=True)
 
+    # Test - General Info
     assert "Dog" == workbook["Info"]["B5"].value
     assert "Woof Woof" == workbook["Info"]["B6"].value
+
+    # Test - Hungry
+    assert None == workbook["Info"]["B9"].value
+    assert None == workbook["Info"]["B10"].value
+    assert None == workbook["Info"]["C9"].value
+    assert None == workbook["Info"]["C10"].value
+    assert None == workbook["Info"]["D9"].value
+    assert None == workbook["Info"]["D10"].value
+
+    # Test - Sleepy
+    assert None == workbook["Info"]["B13"].value
+    assert None == workbook["Info"]["B14"].value
+    assert None == workbook["Info"]["C13"].value
+    assert None == workbook["Info"]["C14"].value
+
+    # Test - Toys
     assert None == workbook["Toys"]["A7"].value
     assert None == workbook["Toys"]["B7"].value
     assert None == workbook["Toys"]["A8"].value
@@ -60,6 +103,17 @@ def test_deep():
     data = {
         "emits": {"noise": "Woof Woof"},
         "pet": {"kind": "Dog"},
+        "mood": {
+            "hungry": [
+                {"current": {"state": "Yes", "wants": "Food"}},
+                {"current": {"state": "Always", "wants": "Food"}},
+                {"current": {"state": "Right Now", "wants": "Food"}},
+            ],
+            "sleepy": [
+                {"current": {"state": "A lot", "wants": "Sleep"}},
+                {"current": {"state": "Also Right Now", "wants": "A Nap"}},
+            ],
+        },
         "likes": {
             "toys": [
                 {
@@ -78,8 +132,25 @@ def test_deep():
 
     workbook = openpyxl.load_workbook(outfile, read_only=True)
 
+    # Test - General Info
     assert "Dog" == workbook["Info"]["B5"].value
     assert "Woof Woof" == workbook["Info"]["B6"].value
+
+    # Test - Hungry
+    assert "Yes" == workbook["Info"]["B9"].value
+    assert "Food" == workbook["Info"]["B10"].value
+    assert "Always" == workbook["Info"]["C9"].value
+    assert "Food" == workbook["Info"]["C10"].value
+    assert "Right Now" == workbook["Info"]["D9"].value
+    assert "Food" == workbook["Info"]["D10"].value
+
+    # Test - Sleepy
+    assert "A lot" == workbook["Info"]["B13"].value
+    assert "Sleep" == workbook["Info"]["B14"].value
+    assert "Also Right Now" == workbook["Info"]["C13"].value
+    assert "A Nap" == workbook["Info"]["C14"].value
+
+    # Test - Toys
     assert "Plastic bone" == workbook["Toys"]["A7"].value
     assert "Oh Yes" == workbook["Toys"]["B7"].value
     assert "Tennis Ball" == workbook["Toys"]["A8"].value
