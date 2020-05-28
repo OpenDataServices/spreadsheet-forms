@@ -19,6 +19,15 @@ def test_1():
     assert {
         "noise": "Miaow Miaow Purr Purr Hiss",
         "pet": "Cat",
+        "hungry": [
+            {"state": "Yes", "wants": "Food"},
+            {"state": "Always", "wants": "Food"},
+            {"state": "Right Now", "wants": "Food"},
+        ],
+        "sleepy": [
+            {"state": "A lot", "wants": "Sleep"},
+            {"state": "Also Right Now", "wants": "A Nap"},
+        ],
         "toys": [
             {"title": "Bit of string", "squeak": "No"},
             {"title": "Marble", "squeak": "No"},
@@ -36,6 +45,17 @@ def test_deep():
     assert {
         "emits": {"noise": "Miaow Miaow Purr Purr Hiss"},
         "pet": {"kind": "Cat"},
+        "mood": {
+            "hungry": [
+                {"current": {"state": "Yes", "wants": "Food"}},
+                {"current": {"state": "Always", "wants": "Food"}},
+                {"current": {"state": "Right Now", "wants": "Food"}},
+            ],
+            "sleepy": [
+                {"current": {"state": "A lot", "wants": "Sleep"}},
+                {"current": {"state": "Also Right Now", "wants": "A Nap"}},
+            ],
+        },
         "likes": {
             "toys": [
                 {

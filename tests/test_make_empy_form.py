@@ -19,6 +19,9 @@ def test_1():
     workbook = openpyxl.load_workbook(outfile, read_only=True)
 
     assert "Pet" == workbook["Info"]["A5"].value
+    assert None == workbook["Info"]["B9"].value
     assert None == workbook["Info"]["B5"].value
+    assert None == workbook["Info"]["B13"].value
+    assert None == workbook["Info"]["B14"].value
     assert None == workbook["Toys"]["A7"].value
     assert None == workbook["Toys"]["B7"].value

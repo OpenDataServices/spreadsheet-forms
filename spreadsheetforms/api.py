@@ -22,6 +22,14 @@ def _get_guide_field_spec_from_content(content):
             "item_path": bits[3],
         }
 
+    if isinstance(content, str) and content.startswith("SPREADSHEETFORM:RIGHT:"):
+        bits = content.split(":")
+        return {
+            "mode": "right",
+            "list_path": bits[2],
+            "item_path": bits[3],
+        }
+
     return None
 
 
@@ -50,6 +58,7 @@ def make_empty_form(guide_filename, out_filename):
 def _build_all_configs_in_excel_sheet(worksheet):
     single_configs = {}
     down_configs = {}
+    right_configs = {}
 
     for row_idx in range(1, worksheet.max_row + 1):
         for cell in worksheet[row_idx]:
@@ -57,6 +66,7 @@ def _build_all_configs_in_excel_sheet(worksheet):
             if guide_field_spec:
                 guide_field_spec["coordinate"] = cell.coordinate
                 guide_field_spec["column_letter"] = cell.column_letter
+                guide_field_spec["column"] = cell.column
                 guide_field_spec["row"] = cell.row
                 if guide_field_spec["mode"] == "single":
                     single_configs[guide_field_spec["path"]] = guide_field_spec
@@ -67,10 +77,19 @@ def _build_all_configs_in_excel_sheet(worksheet):
                         )
                     else:
                         down_configs[guide_field_spec["list_path"]] = [guide_field_spec]
+                elif guide_field_spec["mode"] == "right":
+                    if guide_field_spec["list_path"] in right_configs:
+                        right_configs[guide_field_spec["list_path"]].append(
+                            guide_field_spec
+                        )
+                    else:
+                        right_configs[guide_field_spec["list_path"]] = [
+                            guide_field_spec
+                        ]
 
     # TODO could check that every down config for each list_path is on the same row. Things will get odd if they are not.
 
-    return single_configs, down_configs
+    return single_configs, down_configs, right_configs
 
 
 def get_data_from_form(guide_filename, in_filename, date_format=None):
@@ -81,7 +100,9 @@ def get_data_from_form(guide_filename, in_filename, date_format=None):
     for worksheet in guide_workbook.worksheets:
 
         # Step 1: build details of all configs on this sheet
-        single_configs, down_configs = _build_all_configs_in_excel_sheet(worksheet)
+        single_configs, down_configs, right_configs = _build_all_configs_in_excel_sheet(
+            worksheet
+        )
 
         # Step 2: Process single configs (easy ones)
         for single_config in single_configs.values():
@@ -116,6 +137,29 @@ def get_data_from_form(guide_filename, in_filename, date_format=None):
                 if found_anything:
                     json_append_deep_value(data, down_config[0]["list_path"], item)
 
+        # Step 4: Process Right Configs
+        for right_config in right_configs.values():
+            start_column = right_config[0]["column"]
+            max_column = in_workbook[worksheet.title].max_column + 1
+            json_set_deep_value(data, right_config[0]["list_path"], [])
+            for column in range(start_column, max_column + 1):
+                item = {}
+                found_anything = False
+                for this_right_config in right_config:
+                    cell = in_workbook[worksheet.title][
+                        openpyxl.utils.get_column_letter(column)
+                        + str(this_right_config["row"])
+                    ]
+                    json_set_deep_value(
+                        item,
+                        this_right_config["item_path"],
+                        _get_cell_value(cell, date_format),
+                    )
+                    if json_get_deep_value(item, this_right_config["item_path"]):
+                        found_anything = True
+                if found_anything:
+                    json_append_deep_value(data, right_config[0]["list_path"], item)
+
     return data
 
 
@@ -126,7 +170,9 @@ def put_data_in_form(guide_filename, data, out_filename):
     for worksheet in workbook.worksheets:
 
         # Step 1: build details of all configs on this sheet
-        single_configs, down_configs = _build_all_configs_in_excel_sheet(worksheet)
+        single_configs, down_configs, right_configs = _build_all_configs_in_excel_sheet(
+            worksheet
+        )
 
         # Step 2: Process single configs (easy ones)
         for single_config in single_configs.values():
@@ -152,5 +198,26 @@ def put_data_in_form(guide_filename, data, out_filename):
                 # no data, but we still want to remove the special values from the output spreadsheet
                 for this_down_config in down_config:
                     worksheet[this_down_config["coordinate"]] = ""
+
+        # Step 4: Process Right Configs
+        for right_config in right_configs.values():
+            datas_to_insert = json_get_deep_value(data, right_config[0]["list_path"])
+            if isinstance(datas_to_insert, list) and len(datas_to_insert) > 0:
+                extra_column = 0
+                for data_to_insert in datas_to_insert:
+                    for this_right_config in right_config:
+                        worksheet[
+                            openpyxl.utils.get_column_letter(
+                                this_right_config["column"] + extra_column
+                            )
+                            + str(this_right_config["row"])
+                        ] = json_get_deep_value(
+                            data_to_insert, this_right_config["item_path"]
+                        )
+                    extra_column += 1
+            else:
+                # no data, but we still want to remove the special values from the output spreadsheet
+                for this_right_config in right_config:
+                    worksheet[this_right_config["coordinate"]] = ""
 
     workbook.save(out_filename)
