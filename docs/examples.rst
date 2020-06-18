@@ -3,35 +3,41 @@ Examples
 
 
 
+.. |_| unicode:: 0xA0
+   :trim:
 
 
-A guide of:
+A guide form spreadsheet is the template to show us where to expect data:
 
 +----------------------------------------+------------------------------------------+
-| Pet                                    |  SPREADSHEETFORM:SINGLE:pet              |
+| **Pet**                                |  SPREADSHEETFORM:SINGLE:pet              |
 +----------------------------------------+------------------------------------------+
-| Toys:                                  |                                          |
+| |_|                                    |                                          |
 +----------------------------------------+------------------------------------------+
-| Title                                  |  Does it squeak?                         |
+| **Toys:**                              |                                          |
++----------------------------------------+------------------------------------------+
+| **Title**                              |  **Does it squeak?**                     |
 +----------------------------------------+------------------------------------------+
 | SPREADSHEETFORM:DOWN:likes/toys:title  |  SPREADSHEETFORM:DOWN:likes/toys:squeak  |
 +----------------------------------------+------------------------------------------+
 
-And a spreadsheet of:
+A spreadsheet of:
 
 +-------------------------------------+------------------------------------------+
-| Pet                                 |  Dog                                     |
+| **Pet**                             |  Dog                                     |
 +-------------------------------------+------------------------------------------+
-| Toys:                               |                                          |
+| |_|                                 |                                          |
 +-------------------------------------+------------------------------------------+
-| Title                               |  Does it squeak?                         |
+| **Toys:**                           |                                          |
++-------------------------------------+------------------------------------------+
+| **Title**                           |  **Does it squeak?**                     |
 +-------------------------------------+------------------------------------------+
 | Plastic bone                        |  Oh Yes                                  |
 +-------------------------------------+------------------------------------------+
 | Tennis Ball                         |  No                                      |
 +-------------------------------------+------------------------------------------+
 
-Will map to the data:
+Will map to the data (and vice versa):
 
 .. code-block:: json
 
@@ -44,3 +50,6 @@ Will map to the data:
             ]
         }
     }
+
+Note the SINGLE keyword is turned into a field, but the DOWN row is turned into a list.
+People can add as many or as few items to the DOWN table as they want.
