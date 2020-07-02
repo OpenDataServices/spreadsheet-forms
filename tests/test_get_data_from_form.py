@@ -1,7 +1,7 @@
 import datetime
 import os
 
-from spreadsheetforms.api import get_data_from_form
+from spreadsheetforms.api import get_data_from_form, make_empty_form
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 TEST_DATA_OUT_DIR = os.path.join(
@@ -98,3 +98,16 @@ def test_formats_1_date_format():
         "number": 1.456,
         "string": "CATS",
     } == data
+
+
+def test_empty_form_loads_none():
+    # This is default behaviour, but we probably want to have more options
+    # around this soon so putting in a test to work aganist later
+
+    outfile = os.path.join(TEST_DATA_OUT_DIR, "test_empty.xlsx")
+
+    make_empty_form(os.path.join(TEST_DATA_DIR, "pet1.xlsx"), outfile)
+
+    data = get_data_from_form(os.path.join(TEST_DATA_DIR, "pet1.xlsx"), outfile,)
+
+    assert None == data["pet"]
