@@ -93,38 +93,54 @@ def _build_all_configs_in_excel_sheet(worksheet):
 
 
 def get_data_from_form(guide_filename, in_filename, date_format=None):
-    data = {}
+    guide_spec = get_guide_spec(guide_filename)
+    return get_data_from_form_with_guide_spec(
+        guide_spec, in_filename, date_format=date_format
+    )
+
+
+def get_guide_spec(guide_filename):
     guide_workbook = openpyxl.load_workbook(guide_filename, read_only=True)
-    in_workbook = openpyxl.load_workbook(in_filename, read_only=True)
-
+    guide_spec = {"worksheets": {}}
     for worksheet in guide_workbook.worksheets:
-
-        # Step 1: build details of all configs on this sheet
         single_configs, down_configs, right_configs = _build_all_configs_in_excel_sheet(
             worksheet
         )
+        guide_spec["worksheets"][worksheet.title] = {
+            "single_configs": single_configs,
+            "down_configs": down_configs,
+            "right_configs": right_configs,
+        }
+    return guide_spec
 
-        # Step 2: Process single configs (easy ones)
-        for single_config in single_configs.values():
+
+def get_data_from_form_with_guide_spec(guide_spec, in_filename, date_format=None):
+    data = {}
+    in_workbook = openpyxl.load_workbook(in_filename, read_only=True)
+
+    for worksheet_title, worksheet_spec in guide_spec["worksheets"].items():
+
+        # Step 1: Process single configs (easy ones)
+        for single_config in worksheet_spec["single_configs"].values():
             json_set_deep_value(
                 data,
                 single_config["path"],
                 _get_cell_value(
-                    in_workbook[worksheet.title][single_config["coordinate"]],
+                    in_workbook[worksheet_title][single_config["coordinate"]],
                     date_format,
                 ),
             )
 
-        # Step 3: Process Down Configs
-        for down_config in down_configs.values():
+        # Step 2: Process Down Configs
+        for down_config in worksheet_spec["down_configs"].values():
             start_row = down_config[0]["row"]
-            max_row = in_workbook[worksheet.title].max_row + 1
+            max_row = in_workbook[worksheet_title].max_row + 1
             json_set_deep_value(data, down_config[0]["list_path"], [])
             for row in range(start_row, max_row + 1):
                 item = {}
                 found_anything = False
                 for this_down_config in down_config:
-                    cell = in_workbook[worksheet.title][
+                    cell = in_workbook[worksheet_title][
                         this_down_config["column_letter"] + str(row)
                     ]
                     json_set_deep_value(
@@ -137,16 +153,16 @@ def get_data_from_form(guide_filename, in_filename, date_format=None):
                 if found_anything:
                     json_append_deep_value(data, down_config[0]["list_path"], item)
 
-        # Step 4: Process Right Configs
-        for right_config in right_configs.values():
+        # Step 3: Process Right Configs
+        for right_config in worksheet_spec["right_configs"].values():
             start_column = right_config[0]["column"]
-            max_column = in_workbook[worksheet.title].max_column + 1
+            max_column = in_workbook[worksheet_title].max_column + 1
             json_set_deep_value(data, right_config[0]["list_path"], [])
             for column in range(start_column, max_column + 1):
                 item = {}
                 found_anything = False
                 for this_right_config in right_config:
-                    cell = in_workbook[worksheet.title][
+                    cell = in_workbook[worksheet_title][
                         openpyxl.utils.get_column_letter(column)
                         + str(this_right_config["row"])
                     ]
