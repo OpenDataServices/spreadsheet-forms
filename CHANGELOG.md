@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.4.0] - 2020-08-04
+
 ### Added
 
 - new functions get_guide_spec and get_data_from_form_with_guide_spec
