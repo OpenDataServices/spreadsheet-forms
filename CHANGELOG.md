@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.4.1] - 2020-08-12
+
+### Fixed
+
+- Fixed a crash on a integer cell
+
 ## [0.4.0] - 2020-08-04
 
 ### Added

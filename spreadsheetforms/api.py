@@ -7,7 +7,9 @@ from .util import json_append_deep_value, json_get_deep_value, json_set_deep_val
 
 
 def _is_content_a_guide_field(content):
-    return content and content.startswith("SPREADSHEETFORM:")
+    return (
+        content and isinstance(content, str) and content.startswith("SPREADSHEETFORM:")
+    )
 
 
 def _get_guide_field_spec_from_content(content):
