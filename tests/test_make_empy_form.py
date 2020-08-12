@@ -25,3 +25,10 @@ def test_1():
     assert None == workbook["Info"]["B14"].value
     assert None == workbook["Toys"]["A7"].value
     assert None == workbook["Toys"]["B7"].value
+
+
+def test_nocrash_1():
+
+    outfile = os.path.join(TEST_DATA_OUT_DIR, "nocrash1.xlsx")
+
+    make_empty_form(os.path.join(TEST_DATA_DIR, "nocrash1.xlsx"), outfile)
