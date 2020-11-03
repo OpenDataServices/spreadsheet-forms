@@ -108,6 +108,9 @@ def test_empty_form_loads_none():
 
     make_empty_form(os.path.join(TEST_DATA_DIR, "pet1.xlsx"), outfile)
 
-    data = get_data_from_form(os.path.join(TEST_DATA_DIR, "pet1.xlsx"), outfile,)
+    data = get_data_from_form(
+        os.path.join(TEST_DATA_DIR, "pet1.xlsx"),
+        outfile,
+    )
 
     assert None == data["pet"]

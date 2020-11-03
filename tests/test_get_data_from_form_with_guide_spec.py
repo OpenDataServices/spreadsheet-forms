@@ -107,7 +107,8 @@ def test_1():
     del guide_spec["worksheets"]["Toys"]
 
     data = get_data_from_form_with_guide_spec(
-        guide_spec, os.path.join(TEST_DATA_DIR, "cat1.xlsx"),
+        guide_spec,
+        os.path.join(TEST_DATA_DIR, "cat1.xlsx"),
     )
 
     assert {
