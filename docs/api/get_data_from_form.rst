@@ -4,9 +4,9 @@ get_data_from_form function
 Purpose
 -------
 
-This takes a spreadsheet with user entered data and returns the data the user entered.
+Extracts JSON data from a spreadsheet form, based on a structure specified in a guide form.
 
-(Note if performance is an issue, see if using :doc:`get_data_from_form_with_guide_spec<get_data_from_form_with_guide_spec>` instead will help.)
+Note if performance is an issue, see if using :doc:`get_data_from_form_with_guide_spec<get_data_from_form_with_guide_spec>` instead will help.
 
 Call
 ----
@@ -35,4 +35,4 @@ Pass:
 Outputs
 -------
 
-Returns a JSON block of the data it managed to extract from the input.
+Returns a JSON representation of the data extracted from the form.

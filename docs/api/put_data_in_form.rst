@@ -4,7 +4,7 @@ put_data_in_form function
 Purpose
 -------
 
-This takes a guide form and some existing data, and produces a spreadsheet with the data already in it.
+Populates a spreadsheet form with existing JSON data, based on the structure of a guide form.
 
 Call
 ----

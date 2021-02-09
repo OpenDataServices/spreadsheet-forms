@@ -4,7 +4,7 @@ get_guide_spec function
 Purpose
 -------
 
-This takes a guide spreadsheet and returns the specification of the spreadsheet as a JSON block.
+Extracts a JSON representation of the structure of a spreadsheet form specified in a guide form.
 
 You can use this in combination with :doc:`get_data_from_form_with_guide_spec<get_data_from_form_with_guide_spec>`
 if :doc:`get_data_from_form<get_data_from_form>` is to slow.
@@ -30,4 +30,5 @@ Pass:
 Outputs
 -------
 
-Returns a JSON block of the specification for the guide form
+Returns a JSON representation of the structure specified in the guide form.
+

@@ -4,7 +4,7 @@ make_empty_form function
 Purpose
 -------
 
-This takes a guide form and removes all special fields, creating a blank form that you can send to others to put data into.
+Generates a blank spreadsheet form based on the structure specified in a guide form.
 
 Call
 ----
