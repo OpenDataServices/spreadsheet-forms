@@ -61,7 +61,7 @@ The function :doc:`get_data_from_form<api/get_data_from_form>` will produce the 
     }
 
 Note the SINGLE keyword is turned into a field, but the DOWN row is turned into a list.
-People can add as many or as few items to the DOWN table as they want.
+The people filling in the spreadsheet can add as many or as few items to the DOWN table as they want.
 
 Populating a spreadsheet form
 -----------------------------
