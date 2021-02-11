@@ -6,7 +6,7 @@ Purpose
 
 Extracts JSON data from a spreadsheet form, based on a structure specified in a guide form.
 
-Note if performance is an issue, see if using :doc:`get_data_from_form_with_guide_spec<get_data_from_form_with_guide_spec>` instead will help.
+If performance is an issue, see  :doc:`get_data_from_form_with_guide_spec<get_data_from_form_with_guide_spec>`.
 
 Call
 ----
