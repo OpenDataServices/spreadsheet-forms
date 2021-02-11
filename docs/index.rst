@@ -3,8 +3,6 @@ Spreadsheet Forms
 
 Spreadsheet Forms is a Python library for working with data in JSON format from forms contained in spreadsheets.
 
-If you create a form in a spreadsheet, it is easy to send to other people and ask them to fill it in and send it back to you. This library makes it easier to create and process those forms.
-
 It includes functions to:
 
 * Create a blank spreadsheet form for collecting data
