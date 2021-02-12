@@ -1,10 +1,17 @@
 Spreadsheet Forms
 =================
 
-You want to create a form in a spreadsheet. You want to send this to people who will fill in the data.
-You want to then get the forms back and automatically extract the data from them for you to process.
-Also, maybe you want to take some existing data and put it into a spreadsheet form to send to someone to check.
+Spreadsheet Forms is a Python library for working with data in JSON format from forms contained in spreadsheets.
 
+It includes functions to:
+
+* Create a blank spreadsheet form for collecting data
+* Populate a spreadsheet form with existing data for review
+* Extract JSON data from a spreadsheet form for storage and processing
+
+The above functions require a guide form spreadsheet that specifies the structure of the form.
+
+There can be several functions to achieve the same thing, based on what level of performance you need.
 
 .. toctree::
    :maxdepth: 2
