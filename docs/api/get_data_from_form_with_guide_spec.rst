@@ -12,7 +12,7 @@ This is a version of :doc:`get_data_from_form<get_data_from_form>` that should b
 If called multiple times, or you need faster action when it is called, use this instead.
 Call :doc:`get_guide_spec<get_guide_spec>` and cache the results. Pass that cached value to this function.
 
-If performance is not an issue, we recommend just using :doc:`get_guide_spec<get_guide_spec>` as that is simpler.
+If performance is not an issue, we recommend just using :doc:`get_data_from_form<get_data_from_form>` as that is simpler.
 
 Call
 ----
