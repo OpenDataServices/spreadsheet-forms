@@ -1,7 +1,14 @@
 import datetime
 import os
 
-from spreadsheetforms.api import get_data_from_form, make_empty_form
+import pytest
+
+from spreadsheetforms.api import (
+    GetDataFromFormMissingWorksheetAction,
+    get_data_from_form,
+    make_empty_form,
+)
+from spreadsheetforms.exceptions import MissingWorksheetException
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 TEST_DATA_OUT_DIR = os.path.join(
@@ -31,6 +38,38 @@ def test_1():
         "toys": [
             {"title": "Bit of string", "squeak": "No"},
             {"title": "Marble", "squeak": "No"},
+        ],
+    } == data
+
+
+def test_missing_worksheet_errors_1():
+
+    with pytest.raises(MissingWorksheetException):
+        get_data_from_form(
+            os.path.join(TEST_DATA_DIR, "pet1.xlsx"),
+            os.path.join(TEST_DATA_DIR, "cat1-missingworksheet.xlsx"),
+        )
+
+
+def test_missing_worksheet_provides_no_data_1():
+
+    data = get_data_from_form(
+        os.path.join(TEST_DATA_DIR, "pet1.xlsx"),
+        os.path.join(TEST_DATA_DIR, "cat1-missingworksheet.xlsx"),
+        missing_worksheet_action=GetDataFromFormMissingWorksheetAction.SET_NO_DATA,
+    )
+
+    assert {
+        "noise": "Miaow Miaow Purr Purr Hiss",
+        "pet": "Cat",
+        "hungry": [
+            {"state": "Yes", "wants": "Food"},
+            {"state": "Always", "wants": "Food"},
+            {"state": "Right Now", "wants": "Food"},
+        ],
+        "sleepy": [
+            {"state": "A lot", "wants": "Sleep"},
+            {"state": "Also Right Now", "wants": "A Nap"},
         ],
     } == data
 

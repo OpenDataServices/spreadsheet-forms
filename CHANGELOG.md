@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+
+### Added
+
+- What happens when getting data from a form and a worksheet is missing? New parameter `missing_worksheet_action` to `get_data_from_form` and `get_data_from_form_with_guide_spec`. New Enum `GetDataFromFormMissingWorksheetAction`. Default and old behavior is `RAISE_EXCEPTION`. New option available is `SET_NO_DATA`. New exception class `MissingWorksheetException`.
+
 ## [0.4.1] - 2020-08-12
 
 ### Fixed
