@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.5.0] - 2022-10-19
+
+### Removed
+
+- Python 3.6 support, as Python 3.6 is end of life.
+
+### Added
+
+- What happens when getting data from a form and a worksheet is missing? New parameter `missing_worksheet_action` to `get_data_from_form` and `get_data_from_form_with_guide_spec`. New Enum `GetDataFromFormMissingWorksheetAction`. Default and old behavior is `RAISE_EXCEPTION`. New option available is `SET_NO_DATA`. New exception class `MissingWorksheetException`.
+
+### Fixed
+
+- Broken link in get_data_from_form_with_guide_spec function docs page 
+
 ## [0.4.1] - 2020-08-12
 
 ### Fixed

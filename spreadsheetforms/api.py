@@ -1,8 +1,10 @@
 import datetime
+from enum import Enum
 from shutil import copyfile
 
 import openpyxl
 
+from .exceptions import MissingWorksheetException
 from .util import json_append_deep_value, json_get_deep_value, json_set_deep_value
 
 
@@ -94,10 +96,23 @@ def _build_all_configs_in_excel_sheet(worksheet):
     return single_configs, down_configs, right_configs
 
 
-def get_data_from_form(guide_filename, in_filename, date_format=None):
+class GetDataFromFormMissingWorksheetAction(Enum):
+    RAISE_EXCEPTION = 1
+    SET_NO_DATA = 2
+
+
+def get_data_from_form(
+    guide_filename,
+    in_filename,
+    date_format=None,
+    missing_worksheet_action=GetDataFromFormMissingWorksheetAction.RAISE_EXCEPTION,
+):
     guide_spec = get_guide_spec(guide_filename)
     return get_data_from_form_with_guide_spec(
-        guide_spec, in_filename, date_format=date_format
+        guide_spec,
+        in_filename,
+        date_format=date_format,
+        missing_worksheet_action=missing_worksheet_action,
     )
 
 
@@ -116,67 +131,90 @@ def get_guide_spec(guide_filename):
     return guide_spec
 
 
-def get_data_from_form_with_guide_spec(guide_spec, in_filename, date_format=None):
+def get_data_from_form_with_guide_spec(
+    guide_spec,
+    in_filename,
+    date_format=None,
+    missing_worksheet_action=GetDataFromFormMissingWorksheetAction.RAISE_EXCEPTION,
+):
     data = {}
     in_workbook = openpyxl.load_workbook(in_filename, read_only=True)
 
     for worksheet_title, worksheet_spec in guide_spec["worksheets"].items():
 
-        # Step 1: Process single configs (easy ones)
-        for single_config in worksheet_spec["single_configs"].values():
-            json_set_deep_value(
-                data,
-                single_config["path"],
-                _get_cell_value(
-                    in_workbook[worksheet_title][single_config["coordinate"]],
-                    date_format,
-                ),
-            )
+        # Check sheet exists
+        if worksheet_title in in_workbook:
 
-        # Step 2: Process Down Configs
-        for down_config in worksheet_spec["down_configs"].values():
-            start_row = down_config[0]["row"]
-            max_row = in_workbook[worksheet_title].max_row + 1
-            json_set_deep_value(data, down_config[0]["list_path"], [])
-            for row in range(start_row, max_row + 1):
-                item = {}
-                found_anything = False
-                for this_down_config in down_config:
-                    cell = in_workbook[worksheet_title][
-                        this_down_config["column_letter"] + str(row)
-                    ]
-                    json_set_deep_value(
-                        item,
-                        this_down_config["item_path"],
-                        _get_cell_value(cell, date_format),
-                    )
-                    if json_get_deep_value(item, this_down_config["item_path"]):
-                        found_anything = True
-                if found_anything:
-                    json_append_deep_value(data, down_config[0]["list_path"], item)
+            # Step 1: Process single configs (easy ones)
+            for single_config in worksheet_spec["single_configs"].values():
+                json_set_deep_value(
+                    data,
+                    single_config["path"],
+                    _get_cell_value(
+                        in_workbook[worksheet_title][single_config["coordinate"]],
+                        date_format,
+                    ),
+                )
 
-        # Step 3: Process Right Configs
-        for right_config in worksheet_spec["right_configs"].values():
-            start_column = right_config[0]["column"]
-            max_column = in_workbook[worksheet_title].max_column + 1
-            json_set_deep_value(data, right_config[0]["list_path"], [])
-            for column in range(start_column, max_column + 1):
-                item = {}
-                found_anything = False
-                for this_right_config in right_config:
-                    cell = in_workbook[worksheet_title][
-                        openpyxl.utils.get_column_letter(column)
-                        + str(this_right_config["row"])
-                    ]
-                    json_set_deep_value(
-                        item,
-                        this_right_config["item_path"],
-                        _get_cell_value(cell, date_format),
-                    )
-                    if json_get_deep_value(item, this_right_config["item_path"]):
-                        found_anything = True
-                if found_anything:
-                    json_append_deep_value(data, right_config[0]["list_path"], item)
+            # Step 2: Process Down Configs
+            for down_config in worksheet_spec["down_configs"].values():
+                start_row = down_config[0]["row"]
+                max_row = in_workbook[worksheet_title].max_row + 1
+                json_set_deep_value(data, down_config[0]["list_path"], [])
+                for row in range(start_row, max_row + 1):
+                    item = {}
+                    found_anything = False
+                    for this_down_config in down_config:
+                        cell = in_workbook[worksheet_title][
+                            this_down_config["column_letter"] + str(row)
+                        ]
+                        json_set_deep_value(
+                            item,
+                            this_down_config["item_path"],
+                            _get_cell_value(cell, date_format),
+                        )
+                        if json_get_deep_value(item, this_down_config["item_path"]):
+                            found_anything = True
+                    if found_anything:
+                        json_append_deep_value(data, down_config[0]["list_path"], item)
+
+            # Step 3: Process Right Configs
+            for right_config in worksheet_spec["right_configs"].values():
+                start_column = right_config[0]["column"]
+                max_column = in_workbook[worksheet_title].max_column + 1
+                json_set_deep_value(data, right_config[0]["list_path"], [])
+                for column in range(start_column, max_column + 1):
+                    item = {}
+                    found_anything = False
+                    for this_right_config in right_config:
+                        cell = in_workbook[worksheet_title][
+                            openpyxl.utils.get_column_letter(column)
+                            + str(this_right_config["row"])
+                        ]
+                        json_set_deep_value(
+                            item,
+                            this_right_config["item_path"],
+                            _get_cell_value(cell, date_format),
+                        )
+                        if json_get_deep_value(item, this_right_config["item_path"]):
+                            found_anything = True
+                    if found_anything:
+                        json_append_deep_value(data, right_config[0]["list_path"], item)
+
+        else:
+
+            # Worksheet does not exist!
+
+            # RAISE_EXCEPTION?
+            if (
+                missing_worksheet_action
+                == GetDataFromFormMissingWorksheetAction.RAISE_EXCEPTION
+            ):
+                raise MissingWorksheetException(
+                    "Worksheet " + worksheet_title + " is missing"
+                )
+
+            # For SET_NO_DATA we don't have to do anything
 
     return data
 

@@ -1,0 +1,2 @@
+class MissingWorksheetException(Exception):
+    pass

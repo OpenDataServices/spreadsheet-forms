@@ -12,19 +12,20 @@ This is a version of :doc:`get_data_from_form<get_data_from_form>` that should b
 If called multiple times, or you need faster action when it is called, use this instead.
 Call :doc:`get_guide_spec<get_guide_spec>` and cache the results. Pass that cached value to this function.
 
-If performance is not an issue, we recommend just using :doc:`get_guide_spec<get_guide_spec>` as that is simpler.
+If performance is not an issue, we recommend just using :doc:`get_data_from_form<get_data_from_form>` as that is simpler.
 
 Call
 ----
 
 .. code-block:: python
 
-    from spreadsheetforms.api import get_data_from_form_with_guide_spec
+    from spreadsheetforms.api import get_data_from_form_with_guide_spec, GetDataFromFormMissingWorksheetAction
 
     data = get_data_from_form_with_guide_spec(
         guide_spec,
         in_filename,
-        date_format=None
+        date_format=None,
+        missing_worksheet_action=GetDataFromFormMissingWorksheetAction.RAISE_EXCEPTION
     )
 
 Inputs
@@ -33,10 +34,8 @@ Inputs
 Pass:
 
 * guide_spec - Data from calling the :doc:`get_guide_spec<get_guide_spec>` function
-* in_filename - filename of the input spreadsheet
-* date_format - if None, any date formatted cells in the spreadsheet will be returned as Python datetime.datetime objects.
-  If set, they will be turned into strings using strftime.
-  For format options, see `Python docs <https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes>`_ .
+
+Other parameters are the same as specified for :doc:`get_data_from_form<get_data_from_form>`.
 
 Outputs
 -------
