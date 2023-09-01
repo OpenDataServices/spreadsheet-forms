@@ -14,5 +14,14 @@ setup(
     description="Tools for forms in spreadsheets; creating, extracting submitted data and filling with data",
     python_requires=">=3.7",
     install_requires=install_requires,
-    extras_require={"dev": ["pytest", "flake8", "isort", "black"]},
+    extras_require={
+        "dev": [
+            "pytest",
+            "flake8",
+            "isort",
+            "black==22.10.0",
+            "sphinx",
+            "sphinx_rtd_theme",
+        ]
+    },
 )
