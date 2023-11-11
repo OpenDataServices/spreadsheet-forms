@@ -22,6 +22,7 @@ setup(
             "black==22.10.0",
             "sphinx",
             "sphinx_rtd_theme",
+            "sphinx-autobuild",
         ]
     },
 )
