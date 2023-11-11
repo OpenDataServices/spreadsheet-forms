@@ -2,8 +2,9 @@
 
 .~lock.*
 /.ve
+/tests/data/*
+!/tests/data/*.xlsx
 /tests/data/out/*.xlsx
-
 
 ### PYTHON ###
 # https://github.com/github/gitignore/blob/main/Python.gitignore
