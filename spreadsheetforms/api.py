@@ -49,7 +49,6 @@ def _get_cell_value(cell, date_format=None):
 def _validate_down_configs(down_configs):
     """Validate that all down configs for a given list_path are on the same row."""
     for list_path, configs in down_configs.items():
-
         # Skip empty config lists
         if not configs:
             continue
@@ -64,7 +63,8 @@ def _validate_down_configs(down_configs):
 
 
 class MisalignedDownConfigAction(Enum):
-    """ What to do when misaligned down configs are found. """
+    """What to do when misaligned down configs are found."""
+
     RAISE_EXCEPTION = 1
     SKIP_MISALIGNED = 2
 
@@ -151,7 +151,9 @@ def get_data_from_form(
     )
 
 
-def get_guide_spec(guide_filename, misaligned_config_action=MisalignedDownConfigAction.RAISE_EXCEPTION):
+def get_guide_spec(
+    guide_filename, misaligned_config_action=MisalignedDownConfigAction.RAISE_EXCEPTION
+):
     guide_workbook = openpyxl.load_workbook(guide_filename, read_only=True)
     guide_spec = {"worksheets": {}}
     for worksheet in guide_workbook.worksheets:
