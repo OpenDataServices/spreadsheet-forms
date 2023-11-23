@@ -4,7 +4,7 @@ from shutil import copyfile
 
 import openpyxl
 
-from .exceptions import MissingWorksheetException
+from .exceptions import MissingWorksheetException, MisalignedDownConfigException
 from .util import json_append_deep_value, json_get_deep_value, json_set_deep_value
 
 
@@ -46,6 +46,29 @@ def _get_cell_value(cell, date_format=None):
     return value
 
 
+def _validate_down_configs(down_configs):
+    """Validate that all down configs for a given list_path are on the same row."""
+    for list_path, configs in down_configs.items():
+        # Skip empty config lists
+        if not configs:
+            continue
+
+        # Assume the row number of the first config is the correct one for the list_path
+        expected_row = configs[0]["row"]
+
+        # Check the rest of the configs for the same list_path
+        for config in configs:
+            if config["row"] != expected_row:
+                raise MisalignedDownConfigException(list_path)
+
+
+class MisalignedDownConfigAction(Enum):
+    """What to do when misaligned down configs are found."""
+
+    RAISE_EXCEPTION = 1
+    SKIP_MISALIGNED = 2
+
+
 def make_empty_form(guide_filename, out_filename):
     copyfile(guide_filename, out_filename)
     workbook = openpyxl.load_workbook(out_filename)
@@ -59,7 +82,9 @@ def make_empty_form(guide_filename, out_filename):
     workbook.save(out_filename)
 
 
-def _build_all_configs_in_excel_sheet(worksheet):
+def _build_all_configs_in_excel_sheet(
+    worksheet, misaligned_config_action=MisalignedDownConfigAction.RAISE_EXCEPTION
+):
     single_configs = {}
     down_configs = {}
     right_configs = {}
@@ -91,7 +116,15 @@ def _build_all_configs_in_excel_sheet(worksheet):
                             guide_field_spec
                         ]
 
-    # TODO could check that every down config for each list_path is on the same row. Things will get odd if they are not.
+    # Validate 'down configs' for each 'list_path' to ensure they are on the same row.
+    try:
+        _validate_down_configs(down_configs)
+
+    except MisalignedDownConfigException as e:
+        if misaligned_config_action == MisalignedDownConfigAction.RAISE_EXCEPTION:
+            raise e
+        elif misaligned_config_action == MisalignedDownConfigAction.SKIP_MISALIGNED:
+            pass
 
     return single_configs, down_configs, right_configs
 
@@ -106,6 +139,7 @@ def get_data_from_form(
     in_filename,
     date_format=None,
     missing_worksheet_action=GetDataFromFormMissingWorksheetAction.RAISE_EXCEPTION,
+    misaligned_config_action=MisalignedDownConfigAction.RAISE_EXCEPTION,
 ):
     guide_spec = get_guide_spec(guide_filename)
     return get_data_from_form_with_guide_spec(
@@ -113,15 +147,18 @@ def get_data_from_form(
         in_filename,
         date_format=date_format,
         missing_worksheet_action=missing_worksheet_action,
+        misaligned_config_action=misaligned_config_action,
     )
 
 
-def get_guide_spec(guide_filename):
+def get_guide_spec(
+    guide_filename, misaligned_config_action=MisalignedDownConfigAction.RAISE_EXCEPTION
+):
     guide_workbook = openpyxl.load_workbook(guide_filename, read_only=True)
     guide_spec = {"worksheets": {}}
     for worksheet in guide_workbook.worksheets:
         single_configs, down_configs, right_configs = _build_all_configs_in_excel_sheet(
-            worksheet
+            worksheet, misaligned_config_action
         )
         guide_spec["worksheets"][worksheet.title] = {
             "single_configs": single_configs,
@@ -136,15 +173,14 @@ def get_data_from_form_with_guide_spec(
     in_filename,
     date_format=None,
     missing_worksheet_action=GetDataFromFormMissingWorksheetAction.RAISE_EXCEPTION,
+    misaligned_config_action=MisalignedDownConfigAction.RAISE_EXCEPTION,
 ):
     data = {}
     in_workbook = openpyxl.load_workbook(in_filename, read_only=True)
 
     for worksheet_title, worksheet_spec in guide_spec["worksheets"].items():
-
         # Check sheet exists
         if worksheet_title in in_workbook:
-
             # Step 1: Process single configs (easy ones)
             for single_config in worksheet_spec["single_configs"].values():
                 json_set_deep_value(
@@ -202,7 +238,6 @@ def get_data_from_form_with_guide_spec(
                         json_append_deep_value(data, right_config[0]["list_path"], item)
 
         else:
-
             # Worksheet does not exist!
 
             # RAISE_EXCEPTION?
@@ -224,7 +259,6 @@ def put_data_in_form(guide_filename, data, out_filename):
     workbook = openpyxl.load_workbook(out_filename)
 
     for worksheet in workbook.worksheets:
-
         # Step 1: build details of all configs on this sheet
         single_configs, down_configs, right_configs = _build_all_configs_in_excel_sheet(
             worksheet

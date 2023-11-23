@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.5.1] - 2023-11-22
+
+### Added
+
+- New handling for misaligned 'down configs' in form processing. Introducing an option to either raise an exception or skip the misaligned configurations, enhancing flexibility in handling form data.
+- Added `MisalignedDownConfigAction` Enum with options `RAISE_EXCEPTION` (default behavior) and `SKIP_MISALIGNED`, allowing users to choose how to handle misaligned 'down configs' in their forms.
+- Enhanced error reporting with the introduction of the `MisalignedDownConfigException`, providing more detailed context in case of misalignment issues.
+
+
+## [Unreleased]
+
 ## [0.5.0] - 2022-10-19
 
 ### Removed
