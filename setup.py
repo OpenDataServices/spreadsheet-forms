@@ -21,7 +21,7 @@ setup(
             "isort",
             "black==22.10.0",
             "sphinx",
-            "sphinx_rtd_theme",
+            "odsc-default-sphinx-theme",
         ]
     },
 )
