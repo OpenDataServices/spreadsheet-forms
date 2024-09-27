@@ -12,7 +12,7 @@ setup(
     url="https://github.com/OpenDataServices/spreadsheet-forms",
     license="MIT",
     description="Tools for forms in spreadsheets; creating, extracting submitted data and filling with data",
-    python_requires=">=3.7",
+    python_requires=">=3.9",
     install_requires=install_requires,
     extras_require={
         "dev": [
